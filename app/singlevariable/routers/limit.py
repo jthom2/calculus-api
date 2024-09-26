@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from app.utils.equation_processing import preprocess_input
 import sympy as sp
 import re
 
@@ -7,9 +8,7 @@ router = APIRouter()
 @router.get("/limit/simple")
 async def limit(equation: str, value: float):
     var = sp.symbols("x")
-    equation = equation.replace("^", "**")
-    equation = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', equation)
-    expr = sp.sympify(equation)
+    expr = preprocess_input(equation)
     if "x" not in equation:
         return {"Error": "Please provide an equation with respect to x."}
     try:
